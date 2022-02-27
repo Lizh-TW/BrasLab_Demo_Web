@@ -1,101 +1,118 @@
-<!doctype html>
-<html lang="zh-TW">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Presented by LIZH 🎶.">
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Presented by LIZH 🎶." />
+        <!-- 載入外部插件 start -->
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <title>ZS-TTS</title>
-      
-    <style>
-        body {
-            padding-top: 60px;
-        }
-        
-        @media (min-width: 992px) {
+        <!-- 載入外部插件 end -->
+        <title>Braslab_ZS-TTS_Demo</title>
+
+        <style>
             body {
                 padding-top: 60px;
             }
-        }
-    </style>
-      
-  </head>
-  <body>
-      <div class="container">
-          
-          <div class="row justify-content-center">
-              <div class="col-10"><img class="rounded mx-auto d-block" src="{{url_for('static', filename='Braslab2.png')}}" align="middle" style="width:65%"/></div>
-          </div>
-          
-          <br/><br/>
-          <div class="row justify-content-center">
-              <div class="col-1">
-                  <img class="rounded mx-auto d-block" src="{{url_for('static', filename='catbug.gif')}}" align="middle" style="width:75%"/>
-              </div>
-              <div class="col-md-auto">
-              <p class="h1 text-center fw-bold">👾 ZS-TTS 👾</p>
-              </div>
-              <div class="col-1">
-                  <img class="rounded mx-auto d-block" src="{{url_for('static', filename='catbug.gif')}}" align="middle" style="width:75%"/>
-              </div>
-          </div>
-          
-          <br/>
-          <form name="TTS_form" id="" action="/TTS" method="post" enctype="multipart/form-data">
-              <div>
-                  <label for="formFileLg" class="form-label">CLONE FROM</label>
-                  <div class="input-group mb-3">
-                      <input type="file" class="form-control" id="TTS_clone_file" name="TTS_clone_file">
-                      <button class="btn btn-primary fs-4 fw-bold" id="predict_but" name="predict_but" type="submit">TTS</button>
-                  </div>
-              </div>
 
-              <div class="mb-3">
-                  <label for="exampleFormControlTextarea1" class="form-label">TEXT</label>
-                  <input type="text" class="form-control" id="TTS_text" name="TTS_test">
-              </div>
-          </form>
-          
-          <br/><br/>
-          
-          {%if rt%}
-          <p class="text-start">{{sentence}}</p>
-          <audio controls>
-              <source src={{audio_path}} type="audio/mpeg">
-              Your browser does not support the audio element.
-          </audio>
-          {%endif%}
-          
-          
-      </div>
-      
-    <!-- Optional JavaScript; choose one of the two! -->
+            @media (min-width: 992px) {
+                body {
+                    padding-top: 60px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-10"><img class="rounded mx-auto d-block" src="{{url_for('static', filename='Braslab2.png')}}" align="middle" style="width: 65%;" /></div>
+            </div>
 
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous">
-    </script>
-    <script>
-        function validateForm() {
-            let clone_file = document.forms["TTS_form"]["TTS_clone_file"].value;
-            let TTS_text = document.forms["TTS_form"]["TTS_text"].value;
-            if (clone_file == "") {
-                alert("Ha 選個檔案吧 !");
-                return false;
+            <br />
+            <br />
+
+            <div class="row justify-content-center">
+                <div class="col-1">
+                    <img class="rounded mx-auto d-block" src="{{url_for('static', filename='catbug.gif')}}" align="middle" style="width: 75%;" />
+                </div>
+                <div class="col-md-auto">
+                    <p class="h1 text-center fw-bold">👾 ZS-TTS 👾</p>
+                </div>
+                <div class="col-1">
+                    <img class="rounded mx-auto d-block" src="{{url_for('static', filename='catbug.gif')}}" align="middle" style="width: 75%;" />
+                </div>
+            </div>
+
+            <br />
+
+            <form name="TTS_form" id="TTS_form" action="/TTS" method="post" enctype="multipart/form-data">
+                <div>
+                    <label for="formFileLg" class="form-label">CLONE FROM</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="TTS_clone_file" name="TTS_clone_file" />
+                        <button class="btn btn-primary fs-4 fw-bold" id="TTS-button" name="TTS-button" type="submit">TTS</button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">TEXT</label>
+                    <input type="text" class="form-control" id="TTS_text" name="TTS_test" />
+                </div>
+            </form>
+
+            <br />
+            <br />
+            <audio controls src="{{audio_path}}">
+                Your browser does not support the
+                <code>audio</code> element.
+            </audio>
+        </div>
+
+        <script>
+            // 取得表單
+            let productForm = document.forms.namedItem("TTS_form");
+            productForm.addEventListener("submit", function (event) {
+                post_form(event, productForm);
+            });
+
+            function api_post_form(event, form) {
+                // 取消表單預設提交
+                event.preventDefault();
+
+                let file = $("#TTS_clone_file")[0].files[0]; // 單個檔案
+                let sentence = document.querySelector("#TTS_text").value;
+
+                // 建立一個新的 FormData 物件
+                let formData = new FormData(form);
+
+                // 追加新值到 FormData 物件已有的對應鍵上；若該鍵不存在，則為其追加新的鍵
+
+                formData.append("sentence", sentence);
+                formData.append("clone_file", file);
+
+                let item = {
+                    url: `/TTS`,
+                    type: "POST",
+                    headers: {
+                        // 'Content-Type': 'multipart/form-data',
+                        // 使用 multipart/form-data 在此不需要設定 Content-Type。
+                        "X-Requested-With": "XMLHttpRequest",
+                        Authorization: `Bearer ${userToken}`,
+                    },
+                    contentType: false, //required
+                    processData: false, // required
+                    mimeType: "multipart/form-data",
+                    data: formData,
+                    success: function (result) {
+                        alert(OK);
+                    },
+                };
+
+                $.ajax(item);
             }
-            if(TTS_text == ""){
-                alert("我該說些甚麼呢 ?");
-                return false;
-            }
-        }
-</script>
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js" integrity="sha384-lpyLfhYuitXl2zRZ5Bn2fqnhNAKOAaM/0Kr9laMspuaMiZfGmfwRNFh8HlMy49eQ" crossorigin="anonymous"></script>
-    -->
-  </body>
+        </script>
+    </body>
 </html>

@@ -1,4 +1,5 @@
 import os
+import io
 import torch
 import IPython
 import scipy
@@ -9,7 +10,7 @@ from TTS.utils.synthesizer import Synthesizer
 from TTS.utils.manage import ModelManager
 from TTS.tts.utils.speakers import SpeakerManager
 
-from flask import Flask, render_template, request, make_response, jsonify
+from flask import Flask, render_template, request, send_file
 from werkzeug.utils import secure_filename
 
 
@@ -17,6 +18,7 @@ from src.mkdata import sentence_cleaner
 
 # bulid and load config webserver
 UPLOAD_FOLDER = './static/save_spekaer_file'
+SAVE_TTS = './static/tts_wav'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB
@@ -55,10 +57,9 @@ def tts():
     tts_wav = synthesizer.tts(sentence, speaker_wav=os.path.join(app.config['UPLOAD_FOLDER'], filename))
     tts_wav_filename = time.ctime().replace(' ', '_') + ".wav"
     
-    synthesizer.save_wav(tts_wav, os.path.join(app.config['UPLOAD_FOLDER'], tts_wav_filename))
+    synthesizer.save_wav(tts_wav, os.path.join(SAVE_TTS, tts_wav_filename))
     
-    
-    return render_template("home.html", rt=1, audio_path=os.path.join(app.config['UPLOAD_FOLDER'], tts_wav_filename), sentence=sentence)
+    return render_template("home.html", audio_path=os.path.join(SAVE_TTS, tts_wav_filename))
 
 @app.route("/")
 def index():
