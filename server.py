@@ -24,7 +24,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB
 
 
-use_cuda = False
+use_cuda = True
 manager = ModelManager("/workspace/TTS/TTS/.models.json")
 
 
@@ -51,7 +51,7 @@ def tts():
     filename = secure_filename(file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
-    sentence = request.values['TTS_test']
+    sentence = request.values['sentence']
     sentence = sentence_cleaner(sentence)
     
     tts_wav = synthesizer.tts(sentence, speaker_wav=os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -59,7 +59,8 @@ def tts():
     
     synthesizer.save_wav(tts_wav, os.path.join(SAVE_TTS, tts_wav_filename))
     
-    return render_template("home.html", audio_path=os.path.join(SAVE_TTS, tts_wav_filename))
+    return os.path.join(SAVE_TTS, tts_wav_filename)
+
 
 @app.route("/")
 def index():

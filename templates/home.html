@@ -65,17 +65,17 @@
 
             <br />
             <br />
-            <audio controls src="{{audio_path}}">
-                Your browser does not support the
-                <code>audio</code> element.
-            </audio>
+
+            <table class="table table-hover" id="demo_tb" name="demo_tb">
+                <tbody></tbody>
+            </table>
         </div>
 
         <script>
             // 取得表單
             let productForm = document.forms.namedItem("TTS_form");
             productForm.addEventListener("submit", function (event) {
-                post_form(event, productForm);
+                api_post_form(event, productForm);
             });
 
             function api_post_form(event, form) {
@@ -100,14 +100,16 @@
                         // 'Content-Type': 'multipart/form-data',
                         // 使用 multipart/form-data 在此不需要設定 Content-Type。
                         "X-Requested-With": "XMLHttpRequest",
-                        Authorization: `Bearer ${userToken}`,
+                        Authorization: `Bearer tts`,
                     },
                     contentType: false, //required
                     processData: false, // required
                     mimeType: "multipart/form-data",
                     data: formData,
                     success: function (result) {
-                        alert(OK);
+                        sentence_tb = '<p class="fs-4">' + sentence + "</p>";
+                        audio_tb = "<audio controls src=" + result + "></audio>";
+                        $("#demo_tb>tbody").prepend("<tr><td>" + sentence_tb + "</td><td>" + audio_tb + "</td></tr>");
                     },
                 };
 
