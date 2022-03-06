@@ -1,6 +1,6 @@
 # BrasLab_Demo_Web
 ![plot](./static/Braslab2.png)
-# 基本上是公BRASLAB使用的一個FLASK樣本
+# 基本上是供BRASLAB使用的一個FLASK樣本
 
 # V 1.0
 基本上可用
