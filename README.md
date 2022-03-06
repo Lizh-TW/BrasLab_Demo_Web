@@ -4,9 +4,12 @@
 
 # V 1.0
 基本上可用
-# Future
-完善 VAD 與 RMS。
-添加seendata選項。
-添加html錄音。
-顯示多句。
-可文本TTS。
+# :point_right: Future :point_left: 
+* - [ ] 資料前處理
+  * - [ ] RMS
+  * - [ ] VAD
+* - [ ] 添加seendata選項
+* - [ ] 添加html錄音
+  * - [ ] SSL自簽憑證
+  * - [ ] 錄音功能
+*  - [ ] 多句顯示
