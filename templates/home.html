@@ -27,7 +27,7 @@
     </head>
     <body>
         <div class="container">
-            <div class="row justify-content-center">
+            <div class="row justify-content-center align-items-center">
                 <div class="col-10"><img class="rounded mx-auto d-block" src="{{url_for('static', filename='Braslab2.png')}}" align="middle" style="width: 65%;" /></div>
             </div>
 
@@ -45,30 +45,47 @@
                     <img class="rounded mx-auto d-block" src="{{url_for('static', filename='catbug.gif')}}" align="middle" style="width: 75%;" />
                 </div>
             </div>
-
             <br />
-
-            <form name="TTS_form" id="TTS_form" action="/TTS" method="post" enctype="multipart/form-data">
-                <div>
-                    <label for="formFileLg" class="form-label">CLONE FROM</label>
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" id="TTS_clone_file" name="TTS_clone_file" />
-                        <button class="btn btn-primary fs-4 fw-bold" id="TTS-button" name="TTS-button" type="submit">TTS</button>
+            <br />
+            <!--  施工區 -->
+                        
+        </div>
+        <div class="row">
+            <div class="col align-self-start">
+                <form name="TTS_form" id="TTS_form" action="/TTS" method="post" enctype="multipart/form-data">
+                
+                    <div>
+                    
+                        <label for="formFileLg" class="form-label">CLONE FROM</label>
+                    
+                        <div class="input-group mb-3">
+                        
+                            <input type="file" class="form-control" id="TTS_clone_file" name="TTS_clone_file" />
+                        
+                            <button class="btn btn-primary fs-4 fw-bold" id="TTS-button" name="TTS-button" type="submit">TTS</button>
+                    
+                        </div>
+                
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label">TEXT</label>
-                    <input type="text" class="form-control" id="TTS_text" name="TTS_test" />
-                </div>
-            </form>
-
-            <br />
-            <br />
-
-            <table class="table table-hover" id="demo_tb" name="demo_tb">
-                <tbody></tbody>
-            </table>
+                
+                    <div class="mb-3">
+                    
+                        <label for="exampleFormControlTextarea1" class="form-label">TEXT</label>
+                    
+                        <input type="text" class="form-control" id="TTS_text" name="TTS_test" />
+                
+                    </div>
+            
+                </form>
+            </div>
+            <div class="col align-self-start">
+                <table class="table table-hover" id="demo_tb" name="demo_tb">
+                    <tbody></tbody>
+                </table>
+            </div>
+            <!--        -->
+        
         </div>
 
         <script>
@@ -84,7 +101,8 @@
 
                 let file = $("#TTS_clone_file")[0].files[0]; // 單個檔案
                 let sentence = document.querySelector("#TTS_text").value;
-
+                
+                
                 // 建立一個新的 FormData 物件
                 let formData = new FormData(form);
 
@@ -110,6 +128,8 @@
                         sentence_tb = '<p class="fs-4">' + sentence + "</p>";
                         audio_tb = "<audio controls src=" + result + "></audio>";
                         $("#demo_tb>tbody").prepend("<tr><td>" + sentence_tb + "</td><td>" + audio_tb + "</td></tr>");
+                        sentence_tb=""
+                        audio_tb=""
                     },
                 };
 
