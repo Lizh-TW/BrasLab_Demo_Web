@@ -1,5 +1,7 @@
 *.pth.tar
 *.wav
+*.mp3
+*.m4a
 *.json
 *tar.gz
 # Byte-compiled / optimized / DLL files

@@ -5,6 +5,8 @@ import IPython
 import scipy
 import numpy as np
 import time
+import uuid
+import pathlib
 
 from TTS.utils.synthesizer import Synthesizer
 from TTS.utils.manage import ModelManager
@@ -48,18 +50,24 @@ sample_rate = synthesizer.tts_config.audio["sample_rate"]
 def tts():
     
     file = request.files['TTS_clone_file']
-    filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    org_name = pathlib.Path(secure_filename(file.filename))
+    
+    new_name = str(uuid.uuid4()) + org_name.suffix
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], new_name))
     
     sentence = request.values['sentence']
     sentence = sentence_cleaner(sentence)
     
-    tts_wav = synthesizer.tts(sentence, speaker_wav=os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    tts_wav = synthesizer.tts(sentence, speaker_wav=os.path.join(app.config['UPLOAD_FOLDER'], new_name))
     tts_wav_filename = time.ctime().replace(' ', '_') + ".wav"
     
     synthesizer.save_wav(tts_wav, os.path.join(SAVE_TTS, tts_wav_filename))
-    
     return os.path.join(SAVE_TTS, tts_wav_filename)
+    
+#     out = io.BytesIO()
+#     synthesizer.save_wav(tts_wav, out)
+    
+#     return send_file(out, mimetype="audio/wav")
 
 
 @app.route("/")
