@@ -7,6 +7,9 @@ import numpy as np
 import time
 import uuid
 import pathlib
+import soundfile as sf
+import numpy as np
+import librosa
 
 from TTS.utils.synthesizer import Synthesizer
 from TTS.utils.manage import ModelManager
@@ -16,7 +19,7 @@ from flask import Flask, render_template, request, send_file
 from werkzeug.utils import secure_filename
 
 
-from src.mkdata import sentence_cleaner
+from src.mkdata import sentence_cleaner, rms_norm, do_vad
 
 # bulid and load config webserver
 UPLOAD_FOLDER = './static/save_spekaer_file'
@@ -49,25 +52,33 @@ sample_rate = synthesizer.tts_config.audio["sample_rate"]
 @app.route("/TTS",  methods=["POST"])
 def tts():
     
+    # save file from psot
     file = request.files['TTS_clone_file']
     org_name = pathlib.Path(secure_filename(file.filename))
+    # org_name.suffix
     
-    new_name = str(uuid.uuid4()) + org_name.suffix
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], new_name))
+    new_name = str(uuid.uuid4()) + ".wav"
+    path = os.path.join(app.config['UPLOAD_FOLDER'], new_name) 
+    file.save(path)
     
+    # catch and clear sentence form post
     sentence = request.values['sentence']
     sentence = sentence_cleaner(sentence)
     
-    tts_wav = synthesizer.tts(sentence, speaker_wav=os.path.join(app.config['UPLOAD_FOLDER'], new_name))
-    tts_wav_filename = time.ctime().replace(' ', '_') + ".wav"
+    # rms & vad
+    y, sr = librosa.load(path, 16000)
+    os.remove(path)
+    y = rms_norm(y)
+    sf.write(path, y, sr)
+    do_vad(path)
     
+    # tts
+    tts_wav = synthesizer.tts(sentence, speaker_wav=path)
+    tts_wav_filename = time.ctime().replace(' ', '_') + ".wav"
     synthesizer.save_wav(tts_wav, os.path.join(SAVE_TTS, tts_wav_filename))
+    
     return os.path.join(SAVE_TTS, tts_wav_filename)
     
-#     out = io.BytesIO()
-#     synthesizer.save_wav(tts_wav, out)
-    
-#     return send_file(out, mimetype="audio/wav")
 
 
 @app.route("/")

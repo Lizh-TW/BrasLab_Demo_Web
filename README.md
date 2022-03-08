@@ -8,12 +8,17 @@
 # V 2.0
 解決多句顯示問題
 
+# V 3.0
+資料前處理
+
 # :point_right: Future :point_left: 
-* - [ ] 資料前處理
-  * - [ ] RMS
-  * - [ ] VAD
+* - [X] 資料前處理
+  * - [X] RMS
+  * - [X] VAD
+*  - [X] 多句顯示
+* - [ ] 資安確認
 * - [ ] 添加seendata選項
+* - [ ] introduce page
 * - [ ] 添加html錄音
   * - [ ] SSL自簽憑證
   * - [ ] 錄音功能
-*  - [X] 多句顯示

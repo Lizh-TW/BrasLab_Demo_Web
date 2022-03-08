@@ -2,6 +2,7 @@ import collections
 import contextlib
 import sys
 import wave
+import numpy as np
 
 import webrtcvad
 
@@ -130,7 +131,31 @@ def vad_collector(sample_rate, frame_duration_ms,
         
         
 
-        
+#do vad
+def do_vad(path):
+    audio, sample_rate = read_wave(path)
+    vad = webrtcvad.Vad(3)
+    frames = frame_generator(30, audio, sample_rate)
+    frames = list(frames)
+    segments = vad_collector(sample_rate, 30, 300, vad, frames)
+    segments = list(segments)
+    num_segments = len(segments)
+    flag = False
+    # create the output wave
+    if num_segments != 0:
+        for i, segment in reversed(list(enumerate(segments))):
+            if i >= 1:
+                if not flag:
+                    concat_segment = segment
+                    flag = True
+                else:
+                    concat_segment = segment + concat_segment
+            else:
+                if flag:
+                    segment = segment + concat_segment
+                    # print("Saving: ", output_path)
+                    write_wave(path, segment, sample_rate)
+                    # return
 
         
 # rms        
