@@ -15,7 +15,7 @@ from TTS.utils.synthesizer import Synthesizer
 from TTS.utils.manage import ModelManager
 from TTS.tts.utils.speakers import SpeakerManager
 
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 from werkzeug.utils import secure_filename
 
 
@@ -30,7 +30,7 @@ app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  # 64MB
 
 
 use_cuda = True
-manager = ModelManager("/workspace/TTS/TTS/.models.json")
+manager = ModelManager("/workspace/TTS-0.5.0/TTS/.models.json")
 
 
 model_root = "./model/vits/"
@@ -77,16 +77,23 @@ def tts():
     tts_wav_filename = time.ctime().replace(' ', '_') + ".wav"
     synthesizer.save_wav(tts_wav, os.path.join(SAVE_TTS, tts_wav_filename))
     
-    return os.path.join(SAVE_TTS, tts_wav_filename)
+    res={}
+    res['tts']=os.path.join(SAVE_TTS, tts_wav_filename)
+    res['org']=path
+    
+    return jsonify(res)
     
 
-
-@app.route("/")
-def index():
+@app.route("/ZS-TTS")
+def turn_to_zstts():
     return render_template("home.html")
+    
+@app.route("/")
+def turn_to_introduce():
+    return render_template("introduce.html")
 
 def main():
-    app.run(debug=True, host="::", port=6006)
+    app.run(debug=True, host="::", port=8443)
     
 if __name__ == "__main__":
     main()

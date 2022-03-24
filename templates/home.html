@@ -4,13 +4,13 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Presented by LIZH 🎶." />
-        
+
         <!-- 載入外部插件 start -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <!-- 載入外部插件 end -->
-        <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon">
+        <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" />
         <style>
             body {
                 padding-top: 34px;
@@ -21,23 +21,24 @@
                     padding-top: 36px;
                 }
             }
+            .pre-scrollable {
+                max-height: 400px;
+                overflow-y: scroll;
+            }
         </style>
-        
+
         <title>Braslab_ZS-TTS_Demo</title>
     </head>
     <body>
-        
         <div class="container">
             <div class="row justify-content-evenly">
-                
                 <div class="col-5">
-                    
                     <div class="row justify-content-evenly">
                         <img class="rounded mx-auto d-block" src="{{url_for('static', filename='Braslab2.png')}}" align="middle" style="width: 100%;" />
                     </div>
-                    
+
                     <br />
-                    
+
                     <div class="row justify-content-center">
                         <div class="col-3">
                             <img class="rounded float-end" src="{{url_for('static', filename='speak.png')}}" align="middle" style="width: 30%;" />
@@ -49,33 +50,32 @@
                             <img class="rounded float-start" src="{{url_for('static', filename='text.png')}}" align="middle" style="width: 30%;" />
                         </div>
                     </div>
-                    
+
                     <br />
-                    
+
                     <div class="row">
                         <form name="TTS_form" id="TTS_form" action="/TTS" method="post" enctype="multipart/form-data">
-                            
                             <label for="formFileLg" class="form-label">CLONE FROM</label>
-                            
-                            <div class="input-group">              
+
+                            <div class="input-group">
                                 <input type="file" class="form-control" id="TTS_clone_file" name="TTS_clone_file" />
                                 <button class="btn btn-primary fs-4 fw-bold" id="TTS-button" name="TTS-button" type="submit">TTS</button>
                             </div>
-                            
+
                             <br />
-                            
+
                             <label for="exampleFormControlTextarea1" class="form-label">TEXT</label>
                             <input type="text" class="form-control" id="TTS_text" name="TTS_test" />
-                            
                         </form>
                     </div>
-                    
+
+                    <br />
+
+                    <div class="row">
+                        <audio controls style="display: none;" id="org_speak" name="org_speak"></audio>
+                    </div>
                 </div>
-                
-                <div class="col border border-primary" name="tts_box" id="tts_box">
-                    
-                </div>
-                
+                <div class="col pre-scrollable border border-3 border-info" name="tts_box" id="tts_box"></div>
             </div>
         </div>
 
@@ -83,7 +83,7 @@
             // 取得表單
             let productForm = document.forms.namedItem("TTS_form");
             productForm.addEventListener("submit", function (event) {
-                
+                $("#TTS-button").prop("disabled", true);
                 api_post_form(event, productForm);
             });
 
@@ -93,8 +93,12 @@
 
                 let file = $("#TTS_clone_file")[0].files[0]; // 單個檔案
                 let sentence = document.querySelector("#TTS_text").value;
-                
-                
+                if ($("#TTS_clone_file")[0].files.length == 0 || sentence == "") {
+                    alert("不要空白奧");
+                    $("#TTS-button").prop("disabled", false);
+                    return false;
+                }
+
                 // 建立一個新的 FormData 物件
                 let formData = new FormData(form);
 
@@ -102,17 +106,16 @@
 
                 formData.append("sentence", sentence);
                 formData.append("clone_file", file);
-                
+
                 // 對話框先跑
-                let sentence_append = '<div class="row"><div class="col-11"><p class="fs-4 text-end">' + sentence  + '</p></div>';
-                let image_append = 
-                    '<div class="col"><img class="rounded float-start" src="{{url_for("static", filename="text.png")}}" align="middle" style="width: 110%;" /></div></div>'
-                
+                let sentence_append = '<div class="row"><div class="col-11"><p class="fs-4 text-end">' + sentence + "</p></div>";
+                let image_append = '<div class="col"><img class="rounded float-start" src="{{url_for("static", filename="text.png")}}" align="middle" style="width: 110%;" /></div></div>';
+
                 $("#tts_box").append(sentence_append + image_append);
                 $("#tts_box").append("<br \>");
-                sentence_append = ""
-                image_append =""
-                
+                sentence_append = "";
+                image_append = "";
+                scr_to_down();
 
                 let item = {
                     url: `/TTS`,
@@ -128,19 +131,29 @@
                     mimeType: "multipart/form-data",
                     data: formData,
                     success: function (result) {
-                        
-                        let image_append = 
-                            '<div class="row"><div class="col"><img class="rounded float-start" src="{{url_for("static", filename="speak.png")}}" align="middle" style="width: 120%;" /></div>'
-                        let audio_append = '<div class="col-11"><audio controls src=' + result + '></audio></div></div>';
-                        
+                        let tts_audio = JSON.parse(result);
+                        let image_append = '<div class="row"><div class="col"><img class="rounded float-start" src="{{url_for("static", filename="speak.png")}}" align="middle" style="width: 120%;" /></div>';
+                        let audio_append = '<div class="col-11"><audio controls src=' + tts_audio["tts"] + "></audio></div></div>";
+
                         $("#tts_box").append(image_append + audio_append);
                         $("#tts_box").append("<br \>");
-                        image_append=""
-                        audio_append=""
+                        image_append = "";
+                        audio_append = "";
+                        $("#TTS-button").prop("disabled", false);
+
+                        $("#org_speak").show();
+                        $("#org_speak").attr("src", tts_audio["org"]);
+
+                        scr_to_down();
                     },
                 };
 
                 $.ajax(item);
+            }
+
+            function scr_to_down() {
+                var tts_box = document.getElementById("tts_box");
+                tts_box.scrollTop = tts_box.scrollHeight;
             }
         </script>
     </body>

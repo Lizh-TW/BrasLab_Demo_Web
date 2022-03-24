@@ -1,3 +1,4 @@
+model/
 *.pth.tar
 *.wav
 *.mp3

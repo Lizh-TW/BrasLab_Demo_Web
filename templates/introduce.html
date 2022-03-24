@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Presented by LIZH 🎶." />
+
+        <!-- 載入外部插件 start -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- 載入外部插件 end -->
+        <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon" />
+        <style>
+            body {
+                padding-top: 14px;
+            }
+
+            @media (min-width: 992px) {
+                body {
+                    padding-top: 16px;
+                }
+            }
+        </style>
+
+        <title>Braslab_ZS-TTS_Demo</title>
+    </head>
+    <body>
+        <div class="container">
+                    <div class="row justify-content-evenly">
+                        <img class="rounded mx-auto d-block" src="{{url_for('static', filename='Braslab2.png')}}" align="middle" style="width: 25%;" />
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-2">
+                            <img class="rounded float-end" src="{{url_for('static', filename='speak.png')}}" align="middle" style="width: 30%;" />
+                        </div>
+                        <div class="col-2">
+                            <p class="h4 text-center fw-bold">👾 ZS-TTS 👾</p>
+                        </div>
+                        <div class="col-2">
+                            <img class="rounded float-start" src="{{url_for('static', filename='text.png')}}" align="middle" style="width: 30%;" />
+                        </div>
+                    </div>
+
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <p class="lead fs-3 fw-bold text-center"> 使用說明&介紹 </p>
+                    <p class="fs-6 lh-lg">
+                        &nbsp &nbsp &nbsp &nbsp ZS-TTS，是一個可以模仿你說話的IA文字轉語音(Text-to-Speech)技術，使用方式如右影片示。在使用上有下面幾點需要注意!!
+                    </p>
+                    <ol class="list-group list-group-numbered">
+                        <li class="list-group-item">建議使用電腦瀏覽，我們還沒對行動裝置排版優化</li>
+                      <li class="list-group-item">只能使用聲音檔，建議.wav、.mp3、.m4a</li>
+                      <li class="list-group-item">建議自己錄音，網路上下載可能被壓縮過，人聽不出來但對AI來說差很多</li>
+                        <li class="list-group-item">當機請F5畫面</li>
+                    </ol>
+                    <br />
+                </div>
+                <div class="col-6">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe
+                            width="560"
+                            height="315"
+                            src="https://www.youtube.com/embed/_w_XZ6QB9h8?controls=0"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <button type="button" class="btn btn-outline-primary col-6" name="play-bt" id="play-bt">開始!!</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            $( "#play-bt" ).click(function() {
+                $(location).attr('href', '/ZS-TTS');
+            });
+        </script>
+    </body>
+</html>
